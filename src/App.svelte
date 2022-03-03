@@ -1,30 +1,38 @@
 <script>
-	export let name;
+	import { Router, Route, Link } from "svelte-navigator"
+	import PrivateRoute from './components/PrivateRoute.svelte'
+	import Login from './pages/Login.svelte'
+	import SignUp from './pages/SignUp.svelte'
+	import Main from './pages/Main.svelte'
+	import { user, logout } from './stores/auth'
 </script>
 
-<main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-</main>
+<Router>
+	<header>
+		<nav>
+			<Link to="/">Home</Link>
+			{#if $user}
+				<Link to="main">Dashboard</Link>
+				<button type="button" on:click={logout}>Log Out</button>
+			{:else}
+				<Link to="login">Login</Link>
+			{/if}
+		</nav>
+	</header>
 
-<style>
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-	}
-
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
-</style>
+	<main>
+		<Route path="login">
+      <Login />
+    </Route>
+		<Route path="signup">
+      <SignUp />
+    </Route>
+		<Route path="/">
+      <h3>Landing page</h3>
+      <p>Home sweet home...</p>
+    </Route>
+		<PrivateRoute path="main" let:location>
+      <Main />
+    </PrivateRoute>
+	</main>
+</Router>
